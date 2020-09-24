@@ -1,0 +1,80 @@
+---
+title: "Mai_Kenny_2352_HW2"
+author: "Kenny Mai"
+date: "9/22/2020"
+output: pdf_document
+---
+
+## Homework 2
+# Problem 2.2
+
+Data were obtained from the New York State Department of Conservation (ozone data) and the National Weather Service (meteorological data) on daily air quality in New York City. The data are located in the R package datasets as a built-in data set called airquality. To read in a data set from this package we first need to load the datasets package using the library() function by typing library(datasets) at the prompt. The data set is now available in a data frame object called airquality. Typing the name of the object, airquality, at the prompt should print the data to the screen. A codebook for the data can be examined by typing help(airquality). 
+
+```{r}
+# Load library datasets.
+library(datasets)
+# Load ggplot2.
+library(ggplot2)
+# Check to make sure dataframe airquality is loaded.
+head(airquality)
+```
+
+a) Produce a density plot of daily wind speeds. Describe the distribution by pointing out any interesting features of the plot. 
+
+```{r}
+# I'm creating a duplicate data frame as to preserve the source data
+# I know this isn't too necessary in R, but I write in other languages, so I figure it's a good habit
+df.a = airquality
+# The dates are not convenient for plotting, so we're adding another column to count the days since 5/1
+df.a$daycount = 1:nrow(df.a)
+# Plot density of airquality in ggplot2
+ggplot(df.a, aes(x=Wind)) +
+  geom_density()
+```
+
+The distribution looks like a generalized normal distribution with a relatively high beta coefficient. This causes the distribution to converge to a uniform distribution, hence the "plateau" in the middle of the density plot.
+
+b) Using the subset() function, create an object that contains the air quality data for only the month of June. Use this new object to produce a density plot of solar radiation. 
+
+```{r}
+# Subsetting data for the month of June
+df.b = subset(airquality, Month==6)
+# Plotting solar radiation
+ggplot(df.b, aes(Solar.R)) +
+  geom_density(fill="red")
+```
+
+c) Produce a density plot for the solar radiation for the month of September. Compare and contrast the solar radiation for the month of June and the month of September. 
+```{r}
+# Subsetting data for the month of September
+df.c = subset(airquality, Month==9)
+# Plotting solar radiation
+ggplot(df.c, aes(Solar.R)) +
+  geom_density(fill="light blue")
+```
+
+```{r}
+# Create subset of data with both June and September
+cc = subset(airquality, Month==6 | Month==9)
+# Create groups for density plot
+cc$flag = ifelse(cc$Month==6, "June", "September")
+# Plot both months onto the same density plot
+ggplot(cc, aes(x=Solar.R, color=flag, fill=flag)) +
+  geom_density(alpha=0.5)
+```
+Comparing the two months, we can see that the solar radiation for June has two peaks, one lower and one higher than September. On the other hand September doesn't get as irradiated as June, but rather has a more consistant amount of solar radiation.
+
+d) This data set has missing values—as denoted by entries of NA in both the Ozone and Solar.R variables. How does the mean() function deal with missing values when finding the average? 
+```{r}
+# Finding the mean of Ozone, it will give us NA since by default, na.rm is FALSE in mean()
+mean(airquality$Ozone)
+```
+Since the function mean() has a default of FALSE for the na.rm argument, it will return NA if we try to find the average.
+
+c) At the prompt type mean(airquality$Ozone, na.rm = TRUE). How does the mean() function deal with NA values when the argument na.rm = TRUE is included? 
+```{r}
+mean(airquality$Ozone, na.rm = T)
+```
+By setting the argument na.rm = T, the function removes the values with NA from the input stated before trying to find the average.
+
+

@@ -1,0 +1,66 @@
+---
+title: "Summer Assignment"
+author: "Kenny Mai"
+date: "9/15/2020"
+output: pdf_document
+---
+
+# Uniform Disribution
+## 1) Sample 10,000 values from a uniform distribution with a=0 and b=1 (use ‘runif’; note that the parameter a is the same as “min” and b is the same as “max” in the function documentation). Store these variables in a vector called “pop” and plot a histogram of the values. Note: You can type runif in the Help tab or type ‘?runif’ into the Console to look at the documentation of the function
+```{r}
+# Create vector of 10000 uniformly distributed values between 0 and 1
+pop = runif(10000, 0, 1)
+# Plot pop as a histogram
+hist(pop)
+```
+
+## 2) Calculate the mean and standard deviation of “pop” and verify that you get values close to 0.5 and .289, respectively. Save the population mean as pop_mean and the population standard deviation as pop_sd.
+```{r}
+# Calculate mean of pop
+pop_mean = mean(pop)
+# Print mean of pop
+pop_mean
+# Calculate standard deviation of pop
+pop_sd = sd(pop)
+# Print standard deviation of pop
+pop_sd
+```
+
+## 3) In question 4, you will take 1000 samples of size 50 from the population (“pop”) and calculate the mean of each sample. What do you expect the mean and standard deviation of these means to be? Note: show your calculations and final answers below:
+```{r}
+# Calculate the expected mean of the means and save as samp_dist_mean
+# Set sample size of 50
+samp_size <- 50
+# Save and print the mean of the sampling distribution of the mean
+samp_dist_mean <- pop_mean
+# Print samp_dist_mean
+samp_dist_mean
+# Calculate the expected sd of the means and save as samp_dist_sd
+samp_dist_sd <- pop_sd/sqrt(samp_size)
+# Print samp_dist_sd
+samp_dist_sd
+```
+
+## 4) Draw 1000 samples of size 50 from “pop”; calculate and save the mean of each sample in a vector called samp_means. Calculate the mean and standard devation of the samp_means. Then, plot a histogram and density plot of samp_means. The code has been outlined for you.
+```{r}
+# Set the size of sample
+samp_size <- 50
+# Set the number of iterations (i.e., number of samples)
+ITER <- 100
+# Initializing empty vector samp_means
+samp_means <- rep(NA, length = ITER)
+# Begin loop for for sampling from uniform dist
+for (i in 1:ITER) {
+  samp_means[i] <- mean(sample(pop, size = 50))
+  }
+# Calculate mean of samp_means
+mean(samp_means)
+# Calculate standard deviation of samp_means
+sd(samp_means)
+# Fit two plots on a single line
+par(mfrow=c(1,2))
+# Plot histogram of samp_means
+hist(samp_means, main = "Histogram of samp_means N=50")
+# Plot density plot of samp_means
+plot(density(samp_means), main = "Density plot of samp_means N=50")
+```
