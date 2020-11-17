@@ -1,0 +1,98 @@
+---
+title: "Homework 3"
+author: "Kenny Mai"
+date: "10/5/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# 2352 Homework Class 5
+## Kenny Mai
+
+## 3.2a
+```{r}
+# Setting seed. Code originally written in R 4.0
+set.seed(100)
+# Generate 50 normally distributed values with mean 0 and sd 1
+x = rnorm(50,0,1)
+
+# Plotting density with smoothing parameter of 0.5. Since smoothing in R is bw*adjust, we'll change adjust from default 1 to 0.5
+plot(density(x, adjust = 0.5))
+```
+
+## 3.2b
+```{r}
+# Plotting with triangular kernal
+plot(density(x, adjust = 0.5, kernel = "triangular"))
+# Plotting with rectangular kernal
+plot(density(x, adjust = 0.5, kernel = "rectangular"))
+# Plotting with epanechnikov kernal
+plot(density(x, adjust = 0.5, kernel = "epanechnikov"))
+# Plotting with biweight kernal
+plot(density(x, adjust = 0.5, kernel = "biweight"))
+```
+
+## 3.2c
+Triangular seems to favor rendering sharp peaks, whereas rectangular favors rendering plataeus and horizontal lines. Epanechnikov looks like a compromise of the two, rendering all changes in slope in great detail. Biweight looks like it favors an more smooth plot, choosing which divots and sudden changes in slope to smooth out and make a more continuous curve.
+
+## 3.3a
+```{r message = F}
+# Generating values
+y = rnorm(100,0,1)
+# Check for package "sm", install if it's not there
+if("sm" %in% rownames(installed.packages()) == FALSE) {install.packages("sm")}
+# Load package sm
+library(sm)
+```
+
+```{r}
+# Plot density of y with sm package function
+sm.density(y)
+```
+
+## 3.3b
+```{r}
+# Plot y with model = Normal switch
+sm.density(y, model = "Normal")
+```
+
+## 3.3c
+Based on the reference band, no, it would not seem like the distribution is non-normal. All values of the smoothed curve lie within the reference band.
+
+## 3.3d
+```{r}
+## Generate chi-sq distribution
+z = rchisq(100,3)
+sm.density(z, model = "Normal")
+```
+
+The data are heavily skewed, and outside the reference band. These data can be said to be non-normal.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

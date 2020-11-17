@@ -1,0 +1,29 @@
+---
+title: "Mai_Kenny_2352_HW5"
+author: "Kenny Mai"
+date: "11/17/2020"
+output: pdf_document
+---
+
+```{r}
+library(readr)
+library(ggplot2)
+```
+
+# 5.1
+```{r}
+LatinoEd <- read_csv("~/R/2352-Stat-Computing/LatinoEd.csv")
+LatinoEd$English <- as.factor(LatinoEd$English)
+
+ggplot() +
+  geom_point(data=LatinoEd,aes(x=ImmAge,y=Achieve,color=English))
+
+LatinoEd$AgeBracket <- ceiling(LatinoEd$ImmAge)
+
+ggplot() +
+  geom_boxplot(data=LatinoEd,aes(x=ImmAge,y=Achieve,group=AgeBracket),alpha=0.8) +
+  geom_jitter(data=LatinoEd,aes(x=ImmAge,y=Achieve,color=English))
+```
+
+Based on the scatter and box plots above, the value of the achievement measurement can be seen to be fairly linear across all immigrant age groups, albiet with great variance. The greatest amount of variance can be observed in very young children, with the least amount of variance observed in children between 4 and 7 years of age. When further seperated by whether or not they are proficient with English, it is observed that across all ages, children who are fluent in English score higher on the achievement measurement on average.
+

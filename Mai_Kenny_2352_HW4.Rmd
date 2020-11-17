@@ -1,0 +1,81 @@
+---
+title: "Mai_Kenny_2352_HW4"
+author: "Kenny Mai"
+date: "10/20/2020"
+output: pdf_document
+---
+
+# Stat Computing HW 4
+## Kenny Mai
+
+```{r}
+# Read in data
+vlss <- read.csv("VLSSperCapita.csv")
+```
+
+## Regular density plot
+```{r}
+# Plotting density with regular density function
+plot(density(vlss$Dollars))
+```
+
+## Boxcar density
+```{r}
+boxcar_density <- function(x, frac = 0.25, n = 1000)
+{
+  x_range <- range(x, na.rm = TRUE) # get the range of x (2 values)
+  
+  x_grid <- seq(x_range[1], x_range[2], length.out = n) # set up grid of points
+  
+  # allocate a vector to store result (which is a count of how many points are within the boxcar range)
+  result <- rep(0, n)
+  
+  # find a way to get a left and right side of the evaluation point to include in the calculation of
+  # the local mean
+  
+  # this is the size of the box on either side of the center (point of evaluation)
+  half_box_car <- 0.5 * frac * diff(x_range)
+  
+  # loop through values of x_grid and count number of observed x within the boxcar
+  for (i in 1:n) {
+    pt_left   <- x_grid[i] - half_box_car
+    pt_right  <- x_grid[i] + half_box_car
+    
+    result[i] <- sum(x >= pt_left & x < pt_right)
+  }
+  
+  y <- result / sum(result)  # sum to one
+  y <- y / ((x_range[2] - x_range[1]) / n) # sum to 1/R, with R as defined above.
+  
+  # return the values in a list
+  list_result <- list(x = x_grid, y = y)
+  
+  return(list_result)
+}
+
+# Use function on data
+dens <- boxcar_density(vlss$Dollars)
+# Plot
+plot(dens, type = "l")
+```
+
+## Polygon.freq density
+```{r}
+# Install agricolae package
+# install.packages("agricolae")
+
+# Load package
+library(agricolae)
+
+# Wrap hist() on the data, then use polygon.freq
+polygon.freq(hist(vlss$Dollars))
+```
+
+
+
+
+
+
+
+
+
