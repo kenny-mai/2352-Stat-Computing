@@ -1,0 +1,116 @@
+---
+title: "Mai_Kenny_2352_HW6"
+author: "Kenny Mai"
+date: "11/24/2020"
+output: pdf_document
+---
+
+```{r}
+# Load libraries
+library(readr)
+library(ggplot2)
+```
+
+```{r}
+# Read in data
+asp <- read_csv("AfterSchool.csv")
+head(asp)
+```
+```{r}
+# Find difference in means to examine treatment effects
+with(asp,
+  mean(Victim[Treatment == 1]) - mean(Victim[Treatment == 0])
+)
+ggplot() +
+  geom_density(data=asp,aes(x=Victim,color=as.factor(Treatment)))
+```
+Initial examination shows there may be a treatment effect of -1.3 on the victimization measure
+
+```{r}
+# Randomization test to evaluate if there is convincing evidence of a treatment effect
+set.seed(0)
+permuted <- sample(asp$Victim)
+
+# Difference in means of permutation
+mean(permuted[1:187]) - mean(permuted[188:356])
+
+# Another way of examining difference in means
+trt <- sample(nrow(asp),sum(asp$Treatment))
+ctrl <- setdiff(1:nrow(asp),trt)
+with(asp, mean(Victim[ctrl]) -
+       mean(Victim[trt]))
+```
+Both methods of randomizing the data and finding difference in means yields similar treatment effects around -1.3.
+
+```{r}
+# Creating a mean.diff function to find difference in means for this specific dataset.
+mean.diff <- function(data){
+  mean(data[1:187]) - mean(data[188:356])
+}
+# Creating a var.diff function to find difference in variance.
+var.diff <- function(data){
+  var(data[1:187]) - var(data[188:356])
+}
+# Sanity check
+mean.diff(permuted)
+var.diff(permuted)
+```
+```{r}
+# Permuting the data multiple times
+results <- rep(NA,6)
+# a) 100
+N <- 100
+permuted <- replicate(n = N, expr = sample(asp$Victim))
+diffs <- apply(X = permuted, MARGIN = 2, FUN = mean.diff)
+vars <- apply(X = permuted, MARGIN = 2, FUN = var.diff)
+p <- (length(diffs[abs(diffs)] >= 1.3)+1)/(N + 1)
+results[1] <- p
+# b) 500
+N <- 500
+permuted <- replicate(n = N, expr = sample(asp$Victim))
+diffs <- apply(X = permuted, MARGIN = 2, FUN = mean.diff)
+vars <- apply(X = permuted, MARGIN = 2, FUN = var.diff)
+p <- (length(diffs[abs(diffs)] >= 1.3)+1)/(N + 1)
+results[2] <- p
+# c) 1000
+N <- 1000
+permuted <- replicate(n = N, expr = sample(asp$Victim))
+diffs <- apply(X = permuted, MARGIN = 2, FUN = mean.diff)
+vars <- apply(X = permuted, MARGIN = 2, FUN = var.diff)
+p <- (length(diffs[abs(diffs)] >= 1.3)+1)/(N + 1)
+results[3] <- p
+# d) 5000
+N <- 5000
+permuted <- replicate(n = N, expr = sample(asp$Victim))
+diffs <- apply(X = permuted, MARGIN = 2, FUN = mean.diff)
+vars <- apply(X = permuted, MARGIN = 2, FUN = var.diff)
+p <- (length(diffs[abs(diffs)] >= 1.3)+1)/(N + 1)
+results[4] <- p
+# e) 10000
+N <- 10000
+permuted <- replicate(n = N, expr = sample(asp$Victim))
+diffs <- apply(X = permuted, MARGIN = 2, FUN = mean.diff)
+vars <- apply(X = permuted, MARGIN = 2, FUN = var.diff)
+p <- (length(diffs[abs(diffs)] >= 1.3)+1)/(N + 1)
+results[5] <- p
+# f) 100000
+N <- 100000
+permuted <- replicate(n = N, expr = sample(asp$Victim))
+diffs <- apply(X = permuted, MARGIN = 2, FUN = mean.diff)
+vars <- apply(X = permuted, MARGIN = 2, FUN = var.diff)
+p <- (length(diffs[abs(diffs)] >= 1.3)+1)/(N + 1)
+results[6] <- p
+```
+
+```{r}
+data.frame(Replications=c("100","500","1000","5000","10000","100000"),pvalue=results)
+```
+
+These p-values are greater than 0.05, showing weak evidence of a treatment effect for the data set for the Vicitmization measure.
+
+
+
+
+
+
+
