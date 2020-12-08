@@ -1,0 +1,53 @@
+---
+title: "Mai_Kenny_2352_HW7"
+author: "Kenny Mai"
+date: "12/7/2020"
+output: html_document
+---
+
+7.1
+```{r}
+# Read in the data
+library(readr)
+hsb <- read_csv("HSB.csv")
+```
+
+```{r}
+# Compute conditional means for school type
+condmeans <- tapply(hsb$Sci, hsb$Schtyp, mean)
+condmeans
+# Compute conditional standard deviations
+condstd   <- tapply(hsb$Sci, hsb$Schtyp, var)
+condstd
+
+# Compute mean difference
+meandiff <- condmeans[1]-condmeans[2]
+meandiff
+# Compute pooled variance
+pooledvar <- (((sum(hsb$Schtyp==0)-1) * condstd[1] + (sum(hsb$Schtyp==1)-1) * condstd[2]))/(nrow(hsb)-2)
+pooledvar
+# Compute stadnard error of mean difference
+stdmeandiff <- sqrt(pooledvar * (1/(sum(hsb$Schtyp==0)-1))+(1/(sum(hsb$Schtyp==1)-1)))
+stdmeandiff
+
+# Compute t-statistic
+t <- meandiff/stdmeandiff
+t
+```
+7.2
+```{r}
+# Loading package for Levene Test
+library(car)
+```
+```{r}
+leveneTest(data=hsb, y=hsb$Sci, group=hsb$Schtyp)
+```
+
+Levene test results in a F statistic of 3 versus the T-test, which produced a T statistic of 1. 
+
+
+
+
+
+
+

@@ -1,0 +1,140 @@
+---
+title: "Project 2: Power & AUC"
+output: pdf_document
+---
+
+## Background
+
+See http://gim.unmc.edu/dxtests/roc3.htm for some technical details.
+
+## Prompt
+
+Write a function to compute the True Positive Rate (TPR) of a 2 sample $t$-test,  allowing for different sample and effect sizes. For each section below, you must fill in the parts containing `_____`
+
+Definitions:
+  * TPR: true positive rate: $P(\text{detect an effect} \mid \text{there is an effect})$
+  * FPR: false positive rate: $P(\text{detect an effect} \mid \text{there is NO effect})$
+
+## Function Definition
+
+First, write a function that can be used to calculate the true positive rate using simulation. It should create a fake data set consisting of two groups, each of a pre-specified size, with a pre-specified effect size between them. As with most hypothesis testing, the level of significance for the test should also be an input.
+
+Even though in this case it is possible to approximate the distribution of the test statistic under an alternative hypothesis and calculate the true positive rate close to exactly, we use simulation because the procedure generalizes to other, more complicated scenarios.
+
+```{r simTPR_definition}
+# Returns a simulation based TPR for a two sample t-test with one population
+# having a mean eff.size units larger than the other. Assumes normal, sd = 1
+# populations.
+
+# Inputs:
+#   n:         number of observations in each sample
+#   n.sims:    number of simulation trials
+#   eff.size:  effect size in SD units; assumes observations are from two
+#              standard normal distributions, centered at 0 and 0 + eff.size,
+#              respectively
+#   alpha:     the FPR, as in the alpha level of the test or level of
+#              significance
+
+# Output:
+#   estimate of true positive rate derived using simulation
+simTPR <- function(n, n.sims = 2500, eff.size = 0.1, alpha = 0.05) {
+  # set up a vector of length n.sims to store p.val result from t.test
+  p.val <- _____
+  
+  for (i in 1:n.sims) {
+    # for each iteration, draw two samples:
+    #   x1 with mean zero
+    #   x2 with mean = eff.size
+    # both should have sd = 1
+    x1 <- rnorm(n = n, mean = 0, sd = 1)
+    x2 <- rnorm(_____)
+    
+    # conduct a two sample t.test with 100 * alpha % chance of generating
+    # a false positive
+    tt.result <- t.test(x1, x2, _____)
+    p.val[i] <- tt.result$_____
+  }
+  
+  # return the true positive rate, as defined above
+  return(mean(_____))
+}
+```
+
+## Simulation Setup and Demonstration
+
+In this section, your code is used to illustrate how the true positive rate varies as a function of the allowed false positive rate, with the sample and effect sizes fixed.
+
+```{r simulation_setup}
+set.seed(10001)
+n.sims   <- 2500
+eff.size <- 0.1
+n        <- 500
+# evaluate for each of these:
+alphas   <- seq(0, 1, length = 101)
+
+# vector of corresponding TPRs to each alpha
+tprs <- rep(NA, length(alphas))
+
+for (i in 1:length(alphas)) {
+  # evaluate a TPR given an alpha
+  tprs[i] <- simTPR(n = n, n.sims = n.sims,
+                    eff.size = eff.size,
+                    alpha = alphas[i]) 
+}
+
+plot(alphas, tprs, type = "l",
+     ylim = c(0, 1), xlim = c(0, 1),
+     xlab = "false positive rate", ylab = "true positive rate")
+```
+
+## Varying Sample Sizes
+
+Modify the above simulation to run through all 3 values of `n` given below, and plot separate lines for each that are distinguished by color or line type. Add text to your plot to identify each line with its `n`, as in `n = 100`, `n = 500`, etc. You can use the `locator` function find a position on the graph, or align labels using the `adj` argument of the `text` command, centered at extreme values of `alpha` and `tprs`. The use of `ggplot` is also allowed, if you prefer.
+
+```{r simulation_sample_sizes}
+n <- c(100, 500, 2500)
+
+# generate estimates of the true positive rate either in a matrix or in 3
+# vectors, one for each n
+_____
+
+# plot them all on the same graph
+____
+
+# and label the curves
+____
+```
+
+## Area Under Curve
+
+Completing all of the above correctly will give you credit for 90 points. For the final 10 points, write a function `AUC` that calculates the area under the curve and use it on the curves that you just produced. The area under the curve can be numerically calculated using simple  techniques: find the area of small, simple geometric objects (usually rectangles) laid out on a grid and add all those areas together.
+
+Use your function to calculate the AUC for all three values of `n`.
+
+```{r auc, results = "asis"}
+# AUC should calculate the area under the curve by finding the area of
+# rectangles whose bases run along the x axis and whose heights are given by the
+# curve itself. See http://www.intmath.com/integration/5-trapezoidal-rule.php
+# for more formal discussion.
+AUC <- function(alphas, tprs) {
+  # HINT: diff(alphas) is the distance between 'x' points that define the
+  # rectangle widths
+  
+  widths <- _____ # one line is all that is needed (take more if desired)
+  
+  # REQUIRED: Use the TRAPEZOID RULE: take the average between the 'y' value at
+  # the left point of the interval and the 'y' at the right point when
+  # determining the area for that rectangle
+  
+  heights <- _____  # one line is all that is needed (take more if desired)
+  
+  # HINT: then add up the rectangles
+  
+  return(_____)
+}
+
+cat("AUC for n = ", n[1], ": ", round(AUC(alphas, _____), 2), "\n", sep = "")
+cat("AUC for n = ", n[2], ": ", round(AUC(alphas, _____), 2), "\n", sep = "")
+cat("AUC for n = ", n[3], ": ", round(AUC(alphas, _____), 2), "\n", sep = "")
+```
+
